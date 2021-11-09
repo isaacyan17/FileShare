@@ -1,5 +1,7 @@
+import 'package:file_share/server/server.dart';
 import 'package:file_share/universal/dev_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 
 class Home extends StatefulWidget {
   @override
@@ -23,8 +25,6 @@ class _HomeState extends State<Home> {
               children: [
                 CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage(
-                      "https://pbs.twimg.com/media/D22N_huX4AEbb1y.jpg"),
                   backgroundColor: Colors.grey,
                   child: ElevatedButton(
                     child: Text(
@@ -35,7 +35,8 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     onPressed: (){
-
+                     print('pressed');
+                     Server().init();
                     },
                   ),
                 ),
