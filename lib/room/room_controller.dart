@@ -9,6 +9,9 @@ import 'package:get/get.dart';
 class RoomController extends GetxController {
   late GetSocket socket;
   bool connectState = false;
+  ///存放room的消息记录
+  List<dynamic>? chatLists=[];
+
 
   Future<void> init() async{
     ///打开websocket server
@@ -49,19 +52,21 @@ class RoomController extends GetxController {
     // socket.send('data');
 
   }
-
-// void createShareServer(){
-//   var home;
-//   if(GetPlatform.isDesktop){
-//     home =;
-//   }else{
-//
-//   }
-//   runApp(
-//       GetServerApp(
-//
-//       )
-//   )
-// }
+  ///生命周期
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+  }
+  @override
+  void onReady() {
+    // TODO: implement onReady
+    super.onReady();
+  }
+  @override
+  void onClose() {
+    // TODO: implement onClose
+    super.onClose();
+  }
 
 }

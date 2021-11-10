@@ -22,6 +22,7 @@ class Server {
       // await Future.delayed(Duration.zero);
 
     }catch(e){
+      print(e.toString());
       connectState = false;
     }
     ///socket listener
@@ -45,7 +46,7 @@ class Server {
 
     // socket.emit('event', 'you data');
     //
-    // socket.send('data');
+    socket.send('data');
 
   }
 

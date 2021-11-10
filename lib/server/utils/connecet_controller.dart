@@ -3,6 +3,8 @@ import 'dart:io';
 ///
 
 class ConnectController{
+  ConnectController._();
+
   List<String> connects=[];
 
 }
