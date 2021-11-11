@@ -15,7 +15,7 @@ class RoomController extends GetxController {
   bool connectState = false;
 
   ///存放room的消息记录
-  List<dynamic> chatRecords = <dynamic>[];
+  List<dynamic> chatRecords = <dynamic>[].obs;
 
   Future<void> init() async {
     ///打开websocket server
@@ -27,16 +27,14 @@ class RoomController extends GetxController {
       connectState = true;
     });
     try {
-      socket.connect();
-      // await socket.connect();
-      // await Future.delayed(Duration.zero);
+      await socket.connect();
       // await Future.delayed(Duration.zero);
 
     } catch (e) {
       Log.d(e.toString());
       connectState = false;
     }
-    sendInitialSuccess();
+    await sendInitialSuccess();
 
     ///socket listener
     socketListener();
@@ -103,7 +101,6 @@ class RoomController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     init();
-    Log.d('size: ${chatRecords.length}');
     super.onInit();
   }
 
