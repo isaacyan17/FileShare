@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:file_share/config/config.dart';
 import 'package:file_share/server/model/message_factory.dart';
 import 'package:file_share/server/model/template_message_text.dart';
+import 'package:file_share/server/model/template_message_tip.dart';
+import 'package:file_share/server/server.dart';
 import 'package:file_share/utils/http/platform_utils.dart';
 import 'package:file_share/utils/log.dart';
 import 'package:get/get.dart';
@@ -14,24 +18,28 @@ class RoomController extends GetxController {
   late GetSocket socket;
   bool connectState = false;
 
+  //新加入的client
+  final freshMan = RxBool(true);
+
   ///存放room的消息记录
   List<dynamic> chatRecords = <dynamic>[].obs;
 
   Future<void> init() async {
     ///打开websocket server
     print('init');
-
-    socket = GetSocket('http://127.0.0.1:${Config.serverPort}/transfer');
+    if (freshMan.isTrue) {
+      Server.createServerPage();
+    }
+    socket = GetSocket('http://127.0.0.1:${Config.roomPort}/room');
     socket.onOpen(() {
       Log.d('连接成功');
       connectState = true;
     });
     try {
       await socket.connect();
-      // await Future.delayed(Duration.zero);
-
+      await Future.delayed(Duration.zero);
     } catch (e) {
-      Log.d(e.toString());
+      Log.d('connect e --> $e');
       connectState = false;
     }
     await sendInitialSuccess();
@@ -42,12 +50,24 @@ class RoomController extends GetxController {
 
   ///ws监听
   void socketListener() {
-    socket.on('joined', (val) {
-      print('joined: $val');
+    socket.on('join', (val) {
+      print('join: $val');
     });
 
-    socket.onMessage((val) {
-      print('message received: $val');
+    socket.onMessage((val) async {
+      Log.i('message received: $val');
+      try {
+        Map<String, dynamic> map = jsonDecode(val);
+        if (map.isNotEmpty) {
+          if (map['code'] == '200') {
+            chatRecords.add(MessageFactory.getMessage(
+              TemplateTip(content: map['msg']),
+            ));
+          }
+        }
+      } catch (e) {
+        Log.d('e --> $e');
+      }
     });
 
     socket.onClose((close) {
@@ -57,6 +77,11 @@ class RoomController extends GetxController {
     // socket.emit('event', 'you data');
     //
     // socket.send('data');
+    print('获取历史消息');
+    socket.send(json.encode({
+      'type': 'join',
+      'name': 'ab',
+    }));
   }
 
   Future<void> sendInitialSuccess() async {
@@ -68,7 +93,7 @@ class RoomController extends GetxController {
       if (value.isEmpty) {
         sendText('未发现局域网IP');
       } else {
-        sendText('http://$value:${Config.serverPort}');
+        sendText('http://${value.toString()}:${Config.roomPort}');
       }
     });
   }
@@ -76,13 +101,13 @@ class RoomController extends GetxController {
   /// 发送消息
   Future<void> sendText(String content) async {
     ///消息加入chatRecords,GetX会以观察者模式的方式通知view去做更新
-    print('加入消息: $content');
+    // print('加入消息: $content');
     chatRecords.add(MessageFactory.getMessage(
         TemplateText(
           type: 'text',
           content: content,
         ),
-        true));
+        sendByServer: true));
     // socket.send(sendFileInfo.toString());
   }
 
@@ -100,13 +125,13 @@ class RoomController extends GetxController {
   @override
   void onInit() {
     // TODO: implement onInit
-    init();
     super.onInit();
   }
 
   @override
   void onReady() {
     // TODO: implement onReady
+    init();
     super.onReady();
   }
 

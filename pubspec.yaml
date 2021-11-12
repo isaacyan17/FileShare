@@ -27,6 +27,7 @@ dependencies:
   get:
   dio: ^4.0.1
   logger: ^1.1.0
+  get_server:
 
 
 

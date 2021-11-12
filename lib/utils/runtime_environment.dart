@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:file_share/config/config.dart';
+
 ///运行平台的文件路径
 
 class RuntimeEnv {
@@ -20,16 +22,13 @@ class RuntimeEnv {
   static String? get packageName => _packageName;
 
 //singleton
-  static late final RuntimeEnv _instance;
+  static final RuntimeEnv _instance = RuntimeEnv._internal();
 
-  static get instance {
-    if (_instance == null) {
-      _instance = new RuntimeEnv._internal();
-    }
-    return _instance;
+  factory RuntimeEnv.getInstance() =>_instance;
+
+  RuntimeEnv._internal(){
+    initEnvWithPackageName(Config.packageName);
   }
-
-  RuntimeEnv._internal();
 
   static void initEnvWithPackageName(String packageName) {
     if(_init){
@@ -141,6 +140,13 @@ class RuntimeEnv {
 
   static set homePath(String value) {
     _environment[_homeKey] = value;
+  }
+
+  String getFilePath(){
+    if (_environment.containsKey(_filesKey)) {
+      return _environment[_filesKey]!;
+    }
+    throw Exception();
   }
 
   static String get filesPath {

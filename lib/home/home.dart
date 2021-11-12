@@ -1,5 +1,5 @@
 import 'package:file_share/router/app_routes.dart';
-import 'package:file_share/server/server_view.dart';
+import 'package:file_share/server/server.dart';
 import 'package:file_share/universal/dev_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:file_share/room/room_controller.dart';
 import 'package:file_share/utils/log.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,7 +31,53 @@ class Room extends GetView<RoomController> {
                   itemBuilder: (c, i) {
                     // Log.d('size: ${controller.chatRecords.length}');
                     return controller.chatRecords[i];
-                  })))
+                  }))),
+          ///导航栏
+          Align(
+            alignment: Alignment.topCenter,
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: 8,
+                  sigmaY: 8,
+                ),
+                child: Container(
+                  height: kToolbarHeight+20,
+                  color: Colors.red,
+                  child: AppBar(
+                    title: Text(
+                      'FileShare',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    leading: Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20)
+                        ),
+                        height: 48,
+                        width: 48,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Icon(
+                            Icons.arrow_back_ios_new,
+                            color: Colors.black,
+                          ),
+                          onTap: (){
+                            Get.back();
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
