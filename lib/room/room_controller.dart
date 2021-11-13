@@ -42,7 +42,7 @@ class RoomController extends GetxController {
       connectState = true;
     });
     try {
-      await socket.connect();
+      socket.connect();
       await Future.delayed(Duration.zero);
     } catch (e) {
       Log.d('connect e --> $e');
