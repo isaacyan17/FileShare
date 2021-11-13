@@ -2,4 +2,5 @@
 abstract class AppRoutes{
   ///房间
   static const Room = '/room';
+  static const home = '/';
 }

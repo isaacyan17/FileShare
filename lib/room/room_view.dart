@@ -6,13 +6,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
+// import 'package:get_server/get_server.dart';
 
 class Room extends GetView<RoomController> {
-  // RoomController get controller => Get.find();
+  RoomController get controller => Get.find();
+ final String? serverAddress;
+ final bool? freshMan ;
+ Room({this.serverAddress,this.freshMan});
+
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    controller.init(freshMan:freshMan==null?true:freshMan!,address: serverAddress);
 
     return Scaffold(
       body: Stack(

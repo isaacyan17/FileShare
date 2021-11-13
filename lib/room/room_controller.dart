@@ -19,18 +19,24 @@ class RoomController extends GetxController {
   bool connectState = false;
 
   //新加入的client
-  final freshMan = RxBool(true);
+  // final freshMan = RxBool(true);
 
   ///存放room的消息记录
   List<dynamic> chatRecords = <dynamic>[].obs;
 
-  Future<void> init() async {
+  Future<void> init({bool freshMan :false,String? address} ) async {
     ///打开websocket server
-    print('init');
-    if (freshMan.isTrue) {
+    print('init,fresh: $freshMan');
+    if (freshMan) {
       Server.createServerPage();
     }
-    socket = GetSocket('http://127.0.0.1:${Config.roomPort}/room');
+    var adr;
+    if(!GetPlatform.isWeb){
+      adr = 'http://127.0.0.1:${Config.roomPort}/room';
+    }else{
+      adr = '$address/room';
+    }
+    socket = GetSocket(adr);
     socket.onOpen(() {
       Log.d('连接成功');
       connectState = true;
@@ -131,7 +137,7 @@ class RoomController extends GetxController {
   @override
   void onReady() {
     // TODO: implement onReady
-    init();
+    // init();
     super.onReady();
   }
 

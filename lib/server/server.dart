@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:file_share/config/config.dart';
+import 'package:file_share/room/room_view.dart';
 import 'package:file_share/utils/log.dart';
 import 'package:file_share/utils/runtime_environment.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:get_server/get_server.dart' hide GetPlatform;
 
@@ -25,7 +27,9 @@ class Server {
           home: FolderWidget(home),
           port:Config.roomPort,
           getPages: [
-            GetPage(name: '/room', page: ()=>ServerPage()),
+            GetPage(name: '/room', page: ()=>ServerPage(),
+            method: Method.dynamic
+            ),
           ],
           onNotFound: NotFoundPage(),
         )
