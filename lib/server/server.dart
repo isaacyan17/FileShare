@@ -15,7 +15,7 @@ class Server {
 
   static late String home;
 
-  static createServerPage(){
+  static void createServerPage(){
     if(GetPlatform.isDesktop){
       home = RuntimeEnv.getInstance().getFilePath();
     }else{
@@ -24,6 +24,7 @@ class Server {
       runApp(
         GetServerApp(
           useLog: true,
+          //home ,即'/',localhost访问时的根目录
           home: FolderWidget(home),
           port:Config.roomPort,
           getPages: [
@@ -75,6 +76,10 @@ class ServerPage extends GetView{
       });
       ///消息监听
       socket.onMessage((val) {
+        //chrome 浏览器在不停发空白消息
+        if(val.toString().isEmpty){
+          return;
+        }
         Log.d('收到client消息: $val');
         try{
           //todo 发送历史消息

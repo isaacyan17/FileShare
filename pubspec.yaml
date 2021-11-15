@@ -28,7 +28,8 @@ dependencies:
   dio: ^4.0.1
   logger: ^1.1.0
   get_server:
-
+# 压缩插件
+  archive: ^3.1.2
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -39,6 +39,12 @@ class RoomController extends GetxController {
     socket = GetSocket(adr);
     socket.onOpen(() {
       Log.d('连接成功');
+      //发送消息
+      print('获取历史消息');
+      socket.send(jsonEncode({
+        'type': "join",
+        'name': 'ab',
+      }));
       connectState = true;
     });
     try {
@@ -77,17 +83,13 @@ class RoomController extends GetxController {
     });
 
     socket.onClose((close) {
-      print('断连监听');
+      print('断开与服务器的连接');
     });
 
     // socket.emit('event', 'you data');
     //
     // socket.send('data');
-    print('获取历史消息');
-    socket.send(json.encode({
-      'type': 'join',
-      'name': 'ab',
-    }));
+
   }
 
   Future<void> sendInitialSuccess() async {

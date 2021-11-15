@@ -12,7 +12,7 @@ class Room extends GetView<RoomController> {
   RoomController get controller => Get.find();
  final String? serverAddress;
  final bool? freshMan ;
- Room({this.serverAddress,this.freshMan});
+ Room({Key? key ,this.serverAddress,this.freshMan}) : super(key: key);
 
 
   @override
