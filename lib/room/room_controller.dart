@@ -7,6 +7,7 @@ import 'package:file_share/server/model/template_message_tip.dart';
 import 'package:file_share/server/server.dart';
 import 'package:file_share/utils/http/platform_utils.dart';
 import 'package:file_share/utils/log.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 // import 'package:getsocket/getsocket.dart';
 
@@ -17,6 +18,9 @@ import 'package:get/get.dart';
 class RoomController extends GetxController {
   late GetSocket socket;
   bool connectState = false;
+  FocusNode focusNode = FocusNode();
+  TextEditingController editController = TextEditingController();
+
 
   //新加入的client
   // final freshMan = RxBool(true);
@@ -40,10 +44,10 @@ class RoomController extends GetxController {
     socket.onOpen(() {
       Log.d('连接成功');
       //发送消息
-      print('获取历史消息');
+      ///socket连接成功后，发送一个join动作。
       socket.send(jsonEncode({
         'type': "join",
-        'name': 'ab',
+        'name': GetPlatform.isWeb?'web':'android',
       }));
       connectState = true;
     });
@@ -95,19 +99,19 @@ class RoomController extends GetxController {
   Future<void> sendInitialSuccess() async {
     String msg = '使用浏览器直接打开以下url，'
         '只有同局域网下的设备能打开';
-    sendText(msg);
+    sendText(msg,byServer: true);
     PlatformUtil.localAddress().then((value) {
       Log.d(value);
       if (value.isEmpty) {
-        sendText('未发现局域网IP');
+        sendText('未发现局域网IP',byServer: true);
       } else {
-        sendText('http://${value.toString()}:${Config.roomPort}');
+        sendText('http://${value.toString()}:${Config.roomPort}',byServer: true);
       }
     });
   }
 
   /// 发送消息
-  Future<void> sendText(String content) async {
+  Future<void> sendText(String content,{bool? byServer}) async {
     ///消息加入chatRecords,GetX会以观察者模式的方式通知view去做更新
     // print('加入消息: $content');
     chatRecords.add(MessageFactory.getMessage(
@@ -115,7 +119,7 @@ class RoomController extends GetxController {
           type: 'text',
           content: content,
         ),
-        sendByServer: true));
+        sendByServer: byServer == null ? false : byServer));
     // socket.send(sendFileInfo.toString());
   }
 
@@ -148,4 +152,12 @@ class RoomController extends GetxController {
     // TODO: implement onClose
     super.onClose();
   }
+
+  ///
+  void sendTextMessage({bool? sendByUser}){
+    sendText(editController.text);
+    editController.clear();
+
+  }
+
 }
