@@ -75,10 +75,12 @@ class RoomController extends GetxController {
       try {
         Map<String, dynamic> map = jsonDecode(val);
         if (map.isNotEmpty) {
-          if (map['code'] == '200') {
+          if (map['type'] == 'join') {
             chatRecords.add(MessageFactory.getMessage(
               TemplateTip(content: map['msg']),
             ));
+          }else {
+            chatRecords.add(MessageFactory.getMessage(MessageFactory.fromJson(map)));
           }
         }
       } catch (e) {
@@ -113,14 +115,21 @@ class RoomController extends GetxController {
   /// 发送消息
   Future<void> sendText(String content,{bool? byServer}) async {
     ///消息加入chatRecords,GetX会以观察者模式的方式通知view去做更新
-    // print('加入消息: $content');
+
+    ///使用 ?? 可以为某个空值设置一个默认值 , 如果某个值没有获取到 ,
+    ///或者获取到为空 , 可以为该变量或表达式设置一个默认值 ;
+
+    TemplateText templateText = TemplateText(
+      type: 'text',
+      content: content,
+    );
     chatRecords.add(MessageFactory.getMessage(
-        TemplateText(
-          type: 'text',
-          content: content,
-        ),
-        sendByServer: byServer == null ? false : byServer));
-    // socket.send(sendFileInfo.toString());
+        templateText,
+        sendByServer: byServer??false));
+
+        if(!(byServer??false)){
+          socket.send(templateText.toString());
+        }
   }
 
   // Future<void> scroll() async {

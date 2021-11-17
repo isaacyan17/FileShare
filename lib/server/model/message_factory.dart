@@ -12,11 +12,21 @@ class MessageFactory {
     if (m is TemplateText) {
       child = MessageTextView(
         text: m.content,
-        sendByServer: sendByServer,
+        sendByServer: sendByServer??false,
       );
     }else if(m is TemplateTip){
       child = MessageTipView(text: m.content!);
     }
     return child;
+  }
+
+  /// 服务器解析过来的json格式
+  static Message fromJson(Map<String, dynamic> json){
+    String type = json['type'];
+  switch(type){
+    case 'text':
+      return TemplateText.fromJson(json);
+  }
+    throw '解析异常';
   }
 }

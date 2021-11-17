@@ -90,7 +90,7 @@ class ServerPage extends GetView{
             if(jsonMap['type']=='join'){
                 deviceInfo[socket.id]=jsonMap['name'];
                 socket.broadcast(json.encode({
-                  'code':'200',
+                  'type':'join',
                   'msg':'${jsonMap['name']}加入房间',
                 }));
                 return;
@@ -99,7 +99,7 @@ class ServerPage extends GetView{
         }catch(e){
           Log.e('e -> $e');
         }
-        //收集消息
+        ///当前socket向其他socket广播
         msgs.add(val);
         socket.broadcast(val);
 

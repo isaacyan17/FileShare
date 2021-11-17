@@ -10,7 +10,8 @@ class TemplateText extends Message{
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> map={};
+    Map<String, dynamic> map = super.toJson();
+    map['type'] = type;
     map['content'] = content;
     return map;
   }
