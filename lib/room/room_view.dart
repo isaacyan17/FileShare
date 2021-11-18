@@ -141,8 +141,9 @@ class Room extends GetView<RoomController> {
                     style: TextStyle(
                       textBaseline: TextBaseline.ideographic,
                     ),
+                    textInputAction: TextInputAction.send,
                     onSubmitted: (_) {
-                      //todo
+                      controller.sendTextMessage();
                     },
                     decoration: InputDecoration(
                       isDense: true,
