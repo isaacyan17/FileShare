@@ -20,6 +20,8 @@ class RoomController extends GetxController {
   bool connectState = false;
   FocusNode focusNode = FocusNode();
   TextEditingController editController = TextEditingController();
+  ///页面控制元素
+  final collapse = RxBool(true);
 
 
   //新加入的client

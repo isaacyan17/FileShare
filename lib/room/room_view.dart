@@ -96,9 +96,18 @@ class Room extends GetView<RoomController> {
                   sigmaY: 8,
                   sigmaX: 8,
                 ),
-                child: SizedBox(
-                  height: 70,
-                  child: sharedContainer(context),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: 65,
+                      child: sharedContainer(context),
+                    ),
+                    Obx(() => Offstage(
+                          offstage: controller.collapse.value,
+                          child: expandedWidget(),
+                        )),
+                  ],
                 ),
               ),
             ),
@@ -113,16 +122,18 @@ class Room extends GetView<RoomController> {
       color: Colors.grey[300]!.withOpacity(0.8),
       child: Container(
         child: Padding(
-          padding: EdgeInsets.only(top: 10,bottom: 10,left: 5,right: 5),
+          padding: EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
           child: Row(
             children: [
               SizedBox(
                 child: IconButton(
                   icon: Icon(
-                    Icons.drive_file_move_outline,
+                    Icons.add_circle_outline,
                   ),
                   onPressed: () {
-                    print('file selected');
+                    controller.collapse.update((_) {
+                      controller.collapse.value = !controller.collapse.value;
+                    });
                   },
                 ),
               ),
@@ -174,6 +185,41 @@ class Room extends GetView<RoomController> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget expandedWidget() {
+    return Container(
+      color: Colors.grey[300]!.withOpacity(0.8),
+      child: Padding(
+        padding: EdgeInsets.only(left: 5, right: 5),
+        child: Row(
+          children: [
+            SizedBox(
+              child: IconButton(
+                icon: Icon(
+                  Icons.file_copy,
+                  color: Colors.blue,
+                ),
+                onPressed: () {
+                  print('copy');
+                },
+              ),
+            ),
+            SizedBox(
+              child: IconButton(
+                icon: Icon(
+                  Icons.sd_storage_outlined,
+                  color: Colors.red[400],
+                ),
+                onPressed: () {
+                  print('copy');
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
