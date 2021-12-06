@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 /// 消息为text 格式的widget
 class MessageTextView extends StatelessWidget {
   final String? text;
@@ -51,8 +53,13 @@ class MessageTextView extends StatelessWidget {
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () {
-                log.d('复制到粘贴板');
+              onTap: () async {
+                // log.d('复制到粘贴板');
+                await Clipboard.setData(ClipboardData(text: text)).then((_) {
+                  if (GetPlatform.isMobile)
+                    Fluttertoast.showToast(msg: '内容已复制');
+                  }
+                );
               },
               child: Padding(
                 padding: EdgeInsets.all(10),

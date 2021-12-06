@@ -8,6 +8,7 @@ import 'package:file_share/server/server.dart';
 import 'package:file_share/utils/http/platform_utils.dart';
 import 'package:file_share/utils/log.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 // import 'package:getsocket/getsocket.dart';
 
@@ -164,11 +165,24 @@ class RoomController extends GetxController {
     super.onClose();
   }
 
-  ///
+  ///发送输入框输入的文本信息
   void sendTextMessage({bool? sendByUser}){
     sendText(editController.text);
     editController.clear();
 
+  }
+
+  /// 获取粘贴板上的信息,并复制到输入框
+  void updateClipboardData() async{
+     ClipboardData? val =  await Clipboard.getData(Clipboard.kTextPlain);
+     if(val!=null){
+       //给val? 设置默认值 ''
+       editController.text = val.text ?? '';
+     }
+  }
+
+  Future<void> copyToClipboard(String s) async{
+     Clipboard.setData(ClipboardData(text: s));
   }
 
 }

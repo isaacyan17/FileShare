@@ -144,6 +144,7 @@ class Room extends GetView<RoomController> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
                   ),
+                  ///文本输入框
                   child: TextField(
                     focusNode: controller.focusNode,
                     controller: controller.editController,
@@ -190,6 +191,8 @@ class Room extends GetView<RoomController> {
     );
   }
 
+  /// 可拓展的功能,
+  /// 文件夹, 粘贴板
   Widget expandedWidget() {
     return Container(
       color: Colors.grey[300]!.withOpacity(0.8),
@@ -197,17 +200,19 @@ class Room extends GetView<RoomController> {
         padding: EdgeInsets.only(left: 5, right: 5),
         child: Row(
           children: [
-            SizedBox(
-              child: IconButton(
-                icon: Icon(
-                  Icons.file_copy,
-                  color: Colors.blue,
+            if(GetPlatform.isMobile)
+              SizedBox(
+                child: IconButton(
+                  icon: Icon(
+                    Icons.file_copy,
+                    color: Colors.blue,
+                  ),
+                  onPressed: () {
+                    // print('copy');
+                    controller.updateClipboardData();
+                  },
                 ),
-                onPressed: () {
-                  print('copy');
-                },
               ),
-            ),
             SizedBox(
               child: IconButton(
                 icon: Icon(
@@ -215,7 +220,7 @@ class Room extends GetView<RoomController> {
                   color: Colors.red[400],
                 ),
                 onPressed: () {
-                  print('copy');
+                  print('文件夹');
                 },
               ),
             ),
