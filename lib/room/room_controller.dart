@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:file_share/config/config.dart';
 import 'package:file_share/server/model/message_factory.dart';
 import 'package:file_share/server/model/template_message_text.dart';
@@ -183,6 +185,18 @@ class RoomController extends GetxController {
 
   Future<void> copyToClipboard(String s) async{
      Clipboard.setData(ClipboardData(text: s));
+  }
+
+  /// 选择文件: 打开文件夹
+  Future<void> openDir() async{
+   FilePickerResult? result =  await FilePicker.platform.pickFiles(allowMultiple: true);
+   if (result != null) {
+     List<File> files = result.paths.map((path) => File(path!)).toList();
+     Log.d(files);
+   } else {
+     // User canceled the picker
+   }
+
   }
 
 }

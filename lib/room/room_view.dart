@@ -5,6 +5,7 @@ import 'package:file_share/utils/log.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 // import 'package:get_server/get_server.dart';
 
@@ -37,7 +38,6 @@ class Room extends GetView<RoomController> {
                   ),
                   itemCount: controller.chatRecords.length,
                   itemBuilder: (c, i) {
-                    // Log.d('size: ${controller.chatRecords.length}');
                     return controller.chatRecords[i];
                   }))),
 
@@ -144,6 +144,7 @@ class Room extends GetView<RoomController> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
                   ),
+
                   ///文本输入框
                   child: TextField(
                     focusNode: controller.focusNode,
@@ -200,7 +201,7 @@ class Room extends GetView<RoomController> {
         padding: EdgeInsets.only(left: 5, right: 5),
         child: Row(
           children: [
-            if(GetPlatform.isMobile)
+            if (GetPlatform.isMobile)
               SizedBox(
                 child: IconButton(
                   icon: Icon(
@@ -215,12 +216,13 @@ class Room extends GetView<RoomController> {
               ),
             SizedBox(
               child: IconButton(
-                icon: Icon(
-                  Icons.sd_storage_outlined,
-                  color: Colors.red[400],
+                icon: SvgPicture.asset(
+                  'assets/images/directory.svg',
+                  color: Colors.yellowAccent[700],
                 ),
                 onPressed: () {
                   print('文件夹');
+                  controller.openDir();
                 },
               ),
             ),
