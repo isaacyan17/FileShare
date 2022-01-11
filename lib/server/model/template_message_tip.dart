@@ -1,5 +1,5 @@
 import 'package:file_share/server/model/message.dart';
-
+///消息类型: 提示
 class TemplateTip extends Message{
   String? content;
   String? type;

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_share/config/config.dart';
 import 'package:file_share/server/model/message_factory.dart';
+import 'package:file_share/server/model/template_message_file.dart';
 import 'package:file_share/server/model/template_message_text.dart';
 import 'package:file_share/server/model/template_message_tip.dart';
 import 'package:file_share/server/server.dart';
@@ -115,6 +116,16 @@ class RoomController extends GetxController {
         sendText('http://${value.toString()}:${Config.roomPort}',byServer: true);
       }
     });
+
+    //TODO 测试
+    // TemplateFile templateFile = TemplateFile('127.0.0.1',
+    // fileName: "file.zip",
+    // path: '/sdcard/0/download',
+    // fileSize: '145264',
+    // type: 'file');
+    // chatRecords.add(MessageFactory.getMessage(
+    //     templateFile,
+    //     sendByServer: true));
   }
 
   /// 发送消息
