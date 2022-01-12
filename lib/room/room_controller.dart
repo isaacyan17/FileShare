@@ -27,6 +27,8 @@ class RoomController extends GetxController {
   ///页面控制元素
   final collapse = RxBool(true);
 
+  ///保存本机IP地址集
+  late List<String> mLocalAddress;
 
   //新加入的client
   // final freshMan = RxBool(true);
@@ -113,6 +115,7 @@ class RoomController extends GetxController {
       if (value.isEmpty) {
         sendText('未发现局域网IP',byServer: true);
       } else {
+        mLocalAddress = value;
         sendText('http://${value.toString()}:${Config.roomPort}',byServer: true);
       }
     });
@@ -202,12 +205,33 @@ class RoomController extends GetxController {
   Future<void> openDir() async{
    FilePickerResult? result =  await FilePicker.platform.pickFiles(allowMultiple: true);
    if (result != null) {
+     Log.d(result.files);
+     List<PlatformFile> platFiles = result.files;
+     for(var f in platFiles){
+       sendFile(f);
+     }
+
      List<File> files = result.paths.map((path) => File(path!)).toList();
      Log.d(files);
    } else {
      // User canceled the picker
    }
 
+  }
+
+  Future<void> sendFile(PlatformFile f,{bool sendBySelf = false}) async{
+    String url = 'http://${mLocalAddress[0]}:${Config.roomPort}';
+
+    //todo 布局bug调整, 文件名过长
+    TemplateFile templateFile = TemplateFile(url,
+        fileName:f.name,
+        fileSize: '${f.size} Byte',
+        path: f.path,
+       type: 'file'
+      );
+    chatRecords.add(MessageFactory.getMessage(
+        templateFile,
+        sendByServer: true));
   }
 
 }
