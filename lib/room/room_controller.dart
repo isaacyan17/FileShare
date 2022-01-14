@@ -18,10 +18,10 @@ import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
 import 'package:shelf/shelf_io.dart' as shelfIo;
 
-/// todo 这是一个shareRoom的controller，数据管理
 /// 对于Getx的状态管理和路由，详见 : https://juejin.cn/post/6997283367045562375
 /// or https://github.com/jonataslaw/getx/blob/master/documentation/zh_CN/state_management.md
-///
+///TODO Android - web的平台差异大, 我们目前可以实现Android - Android的局域网传输
+///TODO 现在需要实现Android - web的局域网传输, 这一步还需要: web的localAddress, web file 的部署路径
 class RoomController extends GetxController {
   late GetSocket socket;
   bool connectState = false;
@@ -41,7 +41,7 @@ class RoomController extends GetxController {
 
   Future<void> init({bool freshMan :false,String? address} ) async {
     ///打开websocket server
-    print('init,fresh: $freshMan');
+    print('init,fresh: $freshMan, address: $address');
     if (freshMan) {
       Server.createServerPage();
     }
@@ -91,7 +91,10 @@ class RoomController extends GetxController {
               TemplateTip(content: map['msg']),
             ));
           }else {
-            chatRecords.add(MessageFactory.getMessage(MessageFactory.fromJson(map)));
+            var message = MessageFactory.getMessage(MessageFactory.fromJson(map));
+            Log.i(message);
+
+            chatRecords.add(message);
           }
         }
       } catch (e) {
@@ -215,12 +218,17 @@ class RoomController extends GetxController {
   }
 
   Future<TemplateFile> sendFileToChat(PlatformFile f,{bool sendBySelf = false}) async{
-    String url = 'http://${mLocalAddress[0]}:${Config.roomPort}';
+    String url = '';
+    if(GetPlatform.isWeb){
+      ///todo web的IP地址
+      // url = 'http://127.0.0.1:7001';
+    }else
+      url = 'http://${mLocalAddress[0]}:${Config.roomPort}';
 
     TemplateFile templateFile = TemplateFile(url,
         fileName:f.name,
         fileSize: FileUtils.getFileSize(f.size),
-        path: f.path,
+        path: GetPlatform.isWeb? f.bytes.toString(): f.path,
        type: 'file'
       );
     chatRecords.add(MessageFactory.getMessage(
@@ -234,12 +242,15 @@ class RoomController extends GetxController {
   ///第二步,将文件部署在一个对外服务中
 
   Future<void>prepareToDeployFile(PlatformFile f,{bool sendBySelf = false}) async{
-    if(f.path==null){
-      return ;
+    if(!GetPlatform.isWeb) {
+      if (f.path == null) {
+        return;
+      }
     }
-    deployServer(f.path!);
+    ///web 端选择文件的问题: https://github.com/miguelpruivo/flutter_file_picker/wiki/FAQ
+    if(!GetPlatform.isWeb)
+      deployServer(f.path!);
     TemplateFile file = await sendFileToChat(f,sendBySelf: true);
-
     /// 将消息发送给其他正在room的客户端
     socket.send(file.toString());
   }
