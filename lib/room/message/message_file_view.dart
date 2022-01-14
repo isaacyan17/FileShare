@@ -8,8 +8,9 @@ class MessageFileView extends StatelessWidget {
   late TemplateFile? fileInfo;
   bool hasDownload = false;
 
-  MessageFileView({Key? key, this.fileInfo, this.sendBySelf}) : super(key: key){
-    if(sendBySelf!=null) {
+  MessageFileView({Key? key, this.fileInfo, this.sendBySelf})
+      : super(key: key) {
+    if (sendBySelf != null) {
       hasDownload = hasDownload | sendBySelf!;
     }
   }
@@ -37,17 +38,29 @@ class MessageFileView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
                           padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
-                          child: Text(
-                            fileInfo!.fileName!,
-                            style: TextStyle(color: Colors.black),
+                          child: Container(
+                            constraints: BoxConstraints(maxWidth: 150),
+                            child: Text(
+                              fileInfo!.fileName!,
+                              style: TextStyle(color: Colors.black),
+                            ),
                           ),
                         ),
-                        Text(
-                          fileInfo!.fileSize!,
-                          style: TextStyle(color: Colors.black),
+                        Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: Container(
+                            constraints: BoxConstraints(maxWidth: 150),
+                            child: Text(
+                              fileInfo!.fileSize!,
+                              textAlign: TextAlign.start,
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -86,7 +99,7 @@ class MessageFileView extends StatelessWidget {
                               color: hasDownload
                                   ? Colors.lightBlue
                                   : Colors.grey[400],
-                          fontSize: 11),
+                              fontSize: 11),
                         ),
                       )),
                 ],

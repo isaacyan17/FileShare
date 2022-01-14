@@ -171,7 +171,7 @@ class Room extends GetView<RoomController> {
                 margin: EdgeInsets.only(left: 5),
                 child: TextButton(
                   onPressed: () {
-                    controller.sendTextMessage();
+                    controller.sendTextMessage(sendByUser: true);
                   },
                   child: Text(
                     '发送',

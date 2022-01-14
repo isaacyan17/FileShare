@@ -8,12 +8,15 @@ import 'package:file_share/server/model/template_message_file.dart';
 import 'package:file_share/server/model/template_message_text.dart';
 import 'package:file_share/server/model/template_message_tip.dart';
 import 'package:file_share/server/server.dart';
+import 'package:file_share/utils/FileUtil.dart';
 import 'package:file_share/utils/http/platform_utils.dart';
 import 'package:file_share/utils/log.dart';
+import 'package:file_share/utils/shelf/static_handler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-// import 'package:getsocket/getsocket.dart';
+import 'package:path/path.dart' as p;
+import 'package:shelf/shelf_io.dart' as shelfIo;
 
 /// todo 这是一个shareRoom的controller，数据管理
 /// 对于Getx的状态管理和路由，详见 : https://juejin.cn/post/6997283367045562375
@@ -120,15 +123,6 @@ class RoomController extends GetxController {
       }
     });
 
-    //TODO 测试
-    // TemplateFile templateFile = TemplateFile('127.0.0.1',
-    // fileName: "file.zip",
-    // path: '/sdcard/0/download',
-    // fileSize: '145264',
-    // type: 'file');
-    // chatRecords.add(MessageFactory.getMessage(
-    //     templateFile,
-    //     sendByServer: true));
   }
 
   /// 发送消息
@@ -146,9 +140,9 @@ class RoomController extends GetxController {
         templateText,
         sendByServer: byServer??false));
 
-        if(!(byServer??false)){
+        // if(!(byServer??false)){
           socket.send(templateText.toString());
-        }
+        // }
   }
 
   // Future<void> scroll() async {
@@ -183,7 +177,7 @@ class RoomController extends GetxController {
 
   ///发送输入框输入的文本信息
   void sendTextMessage({bool? sendByUser}){
-    sendText(editController.text);
+    sendText(editController.text,byServer: sendByUser);
     editController.clear();
 
   }
@@ -203,35 +197,69 @@ class RoomController extends GetxController {
 
   /// 选择文件: 打开文件夹
   Future<void> openDir() async{
-   FilePickerResult? result =  await FilePicker.platform.pickFiles(allowMultiple: true);
+   FilePickerResult? result =  await FilePicker.platform.pickFiles();
    if (result != null) {
      Log.d(result.files);
      List<PlatformFile> platFiles = result.files;
      for(var f in platFiles){
-       sendFile(f);
+       prepareToDeployFile(f);
      }
 
-     List<File> files = result.paths.map((path) => File(path!)).toList();
-     Log.d(files);
+     // List<File> files = result.paths.map((path) => File(path!)).toList();
+     // Log.d(files);
    } else {
      // User canceled the picker
+     Log.e('没有获取到文件');
    }
 
   }
 
-  Future<void> sendFile(PlatformFile f,{bool sendBySelf = false}) async{
+  Future<TemplateFile> sendFileToChat(PlatformFile f,{bool sendBySelf = false}) async{
     String url = 'http://${mLocalAddress[0]}:${Config.roomPort}';
 
-    //todo 布局bug调整, 文件名过长
     TemplateFile templateFile = TemplateFile(url,
         fileName:f.name,
-        fileSize: '${f.size} Byte',
+        fileSize: FileUtils.getFileSize(f.size),
         path: f.path,
        type: 'file'
       );
     chatRecords.add(MessageFactory.getMessage(
         templateFile,
-        sendByServer: true));
+        sendByServer: sendBySelf));
+    return templateFile;
   }
+
+  ///将文件部署到服务上,方便其他订阅者接收
+  ///第一步, 将文件显示在聊天列表中
+  ///第二步,将文件部署在一个对外服务中
+
+  Future<void>prepareToDeployFile(PlatformFile f,{bool sendBySelf = false}) async{
+    if(f.path==null){
+      return ;
+    }
+    deployServer(f.path!);
+    TemplateFile file = await sendFileToChat(f,sendBySelf: true);
+
+    /// 将消息发送给其他正在room的客户端
+    socket.send(file.toString());
+  }
+
+  ///开启服务部署这个文件
+  Future<void> deployServer(String path) async {
+    String filePath = path.replaceAll('\\', '/');
+    filePath = filePath.replaceAll(RegExp('^[A-Z]:'), '');
+    filePath = filePath.replaceAll(RegExp('^/'), '');
+    // Path
+    String url = p.toUri(filePath).toString();
+    Log.i('准备部署的url: $url');
+
+    ///这里我们需要开一个本地服务,提供一个http链接,并且处理request和response
+    ///我们要通过这个服务,将文件传输出去
+
+    var handler = createFileHandler(path, url: url);
+    shelfIo.serve(handler, InternetAddress.anyIPv4, Config.filePort,
+        shared: true);
+  }
+
 
 }

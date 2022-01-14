@@ -19,7 +19,7 @@ class MessageFactory {
     }else if(m is TemplateTip){
       child = MessageTipView(text: m.content!);
     }else if(m is TemplateFile){
-      child = MessageFileView(fileInfo: m,sendBySelf: sendByServer);
+      child = MessageFileView(fileInfo: m,sendBySelf: sendByServer?? false);
     }
     return child;
   }

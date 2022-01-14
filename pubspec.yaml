@@ -36,6 +36,13 @@ dependencies:
   file_picker: ^4.3.0
   # SVG图片
   flutter_svg: ^0.23.0
+  # 跨平台文件路径库
+  path: ^1.8.0
+  # 本地服务库
+  shelf: ^1.2.0
+  shelf_router: ^1.0.0
+  #
+  convert: ^3.0.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
