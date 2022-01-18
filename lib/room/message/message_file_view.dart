@@ -127,6 +127,7 @@ class MessageFileView extends StatelessWidget {
     );
   }
 
+  //todo  需要一个安卓客户端加入room,测试dio
   Future<void> downloadFile(String url,String localPath,String fileName) async{
     if(await Permission.storage.request().isGranted) {
       try {
