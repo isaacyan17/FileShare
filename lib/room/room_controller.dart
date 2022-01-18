@@ -92,7 +92,6 @@ class RoomController extends GetxController {
             ));
           }else {
             var message = MessageFactory.getMessage(MessageFactory.fromJson(map));
-            Log.i(message);
 
             chatRecords.add(message);
           }

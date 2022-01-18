@@ -11,7 +11,9 @@ class TemplateFile extends Message {
 
   /// 构建文件类型的消息 , url为必传项
   TemplateFile(url, {this.fileName, this.path, this.fileSize, this.type})
-      : super(type: type);
+      : super(type: type){
+      this.url = url;
+  }
 
   /// 从json解析成TemplateFile 模板bean
   TemplateFile.fromJson(Map<String, dynamic> json) {
